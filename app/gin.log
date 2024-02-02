@@ -1,0 +1,2 @@
+[GIN-debug] POST   /new_article              --> mospol/internal/services.CreateAtricle (3 handlers)
+[GIN-debug] POST   /new_author               --> mospol/internal/services.CreateAuthor (3 handlers)
