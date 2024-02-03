@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"log"
 	"mospol/database/postgres"
 	"mospol/internal/entity"
@@ -25,11 +26,15 @@ func CreateAtricle(ctx *gin.Context) {
 	defer pg.Close()
 
 	if err := ctx.BindJSON(&request); err != nil {
-		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: err})
+		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t parse body"})
+		return
 	}
 
+	fmt.Println(request)
+
 	if err := pg.WriteAtricle(request); err != nil {
-		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: err})
+		ctx.JSON(http.StatusInternalServerError, entity.ErrorResponse{Error: "can`t create an entry in db"})
+		return
 	}
 
 	ctx.JSON(http.StatusCreated, "ok")

@@ -1,7 +1,7 @@
 package entity
 
 type CreateAtricleRequest struct {
-	Author  int    `json:"article"`
+	Author  int    `json:"author"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
 }
@@ -11,6 +11,12 @@ type CreateAuthorRequest struct {
 	IsModerator bool   `json:"is_moderator"`
 }
 
+type CreateCommentRequest struct {
+	Article     int    `json:"article_id"`
+	Commentator int    `json:"commentator_id"`
+	Comment     string `json:"comment"`
+}
+
 type ErrorResponse struct {
-	Error error `json:"error"`
+	Error string `json:"error"`
 }

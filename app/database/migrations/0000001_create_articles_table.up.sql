@@ -14,5 +14,9 @@ CREATE TABLE IF NOT EXISTS "articles" (
 
 CREATE TABLE IF NOT EXISTS "comments" (
     comment_id serial PRIMARY KEY,
-    comment TEXT
+    comment TEXT,
+    commentator INT UNIQUE,
+    article INT UNIQUE,
+    FOREIGN KEY (commentator) REFERENCES authors(author_id),
+    FOREIGN KEY (article) REFERENCES articles(article_id) 
 )

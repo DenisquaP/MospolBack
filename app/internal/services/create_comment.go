@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateAuthor(ctx *gin.Context) {
-	var request entity.CreateAuthorRequest
+func CreateComment(ctx *gin.Context) {
+	var request entity.CreateCommentRequest
 
 	pg, err := postgres.NewPostgres()
 	if err != nil {
@@ -18,18 +18,13 @@ func CreateAuthor(ctx *gin.Context) {
 	}
 
 	if err := pg.Connection(); err != nil {
-		log.Fatal(err)
+		log.Fatal("connection failed")
 	}
 
 	defer pg.Close()
 
 	if err := ctx.BindJSON(&request); err != nil {
-		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: err})
+		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t parse body"})
+		return
 	}
-
-	if err := pg.WriteAuthor(request); err != nil {
-		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: err})
-	}
-
-	ctx.JSON(http.StatusCreated, "ok")
 }

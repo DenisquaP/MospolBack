@@ -70,6 +70,23 @@ func (p PostgresDB) WriteAtricle(article entity.CreateAtricleRequest) error {
 	return nil
 }
 
+// Дописать функцию
+func (p PostgresDB) WriteComment(comment entity.CreateCommentRequest) error {
+	query := "INSERT INTO articles (comment) VALUES (@header, @content, @author)"
+
+	args := pgx.NamedArgs{
+		"article":     comment.Article,
+		"commentator": comment.Commentator,
+		"comment":     comment.Comment,
+	}
+
+	if _, err := p.client.Exec(p.ctx, query, args); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p PostgresDB) Close() error {
 	err := p.client.Close(p.ctx)
 	if err != nil {
@@ -80,7 +97,7 @@ func (p PostgresDB) Close() error {
 }
 
 func (p *PostgresDB) MigrationsUp() error {
-	sourceURL := "file://database/migrations/up"
+	sourceURL := "file://database/migrations"
 
 	m, err := migrate.New(sourceURL, p.url)
 	if err != nil {
