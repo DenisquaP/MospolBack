@@ -55,10 +55,12 @@ func (p PostgresDB) WriteAuthor(author entity.CreateAuthorRequest) error {
 }
 
 func (p PostgresDB) WriteAtricle(article entity.CreateAtricleRequest) error {
-	query := "INSERT INTO articles (header, content, author) VALUES (@header, @content, @author)"
+	query := "INSERT INTO articles (title, content, author) VALUES (@title, @content, @author)"
+
+	fmt.Println(article.Title)
 
 	args := pgx.NamedArgs{
-		"header":  article.Title,
+		"title":   article.Title,
 		"content": article.Content,
 		"author":  article.Author,
 	}
@@ -70,9 +72,8 @@ func (p PostgresDB) WriteAtricle(article entity.CreateAtricleRequest) error {
 	return nil
 }
 
-// Дописать функцию
 func (p PostgresDB) WriteComment(comment entity.CreateCommentRequest) error {
-	query := "INSERT INTO articles (comment) VALUES (@header, @content, @author)"
+	query := "INSERT INTO articles (comment, commentator, article) VALUES (@comment, @commentator, @article)"
 
 	args := pgx.NamedArgs{
 		"article":     comment.Article,

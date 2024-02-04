@@ -1,3 +1,1 @@
-DROP TABLE users IF EXISTS;
-DROP TABLE articles IF EXISTS;
-DROP TABLE comments IF EXISTS
+drop table if Exists articles, authors, comments, schema_migrations 

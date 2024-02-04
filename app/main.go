@@ -23,9 +23,12 @@ func main() {
 
 	router.POST("/new_article", services.CreateAtricle)
 	router.POST("/new_author", services.CreateAuthor)
+	router.POST("/new_comment", services.CreateComment)
 
-	if err := pg.MigrationsUp(); err.Error() != "no change" {
-		log.Fatalf("Migration create was failed: %v", err)
+	if err := pg.MigrationsUp(); err != nil {
+		if err.Error() != "no change" {
+			log.Fatal(err)
+		}
 	}
 
 	router.Run()
