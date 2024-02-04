@@ -17,6 +17,12 @@ type CreateCommentRequest struct {
 	Comment     string `json:"comment"`
 }
 
+type GetAtricleResponse struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Author  string `json:"author"`
+}
+
 type ErrorResponse struct {
 	Error string `json:"error"`
 }

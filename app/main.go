@@ -25,6 +25,9 @@ func main() {
 	router.POST("/new_author", services.CreateAuthor)
 	router.POST("/new_comment", services.CreateComment)
 
+	router.GET("/get_articles", services.GetArticles)
+	router.GET("/get_article", services.GetArticle)
+
 	if err := pg.MigrationsUp(); err != nil {
 		if err.Error() != "no change" {
 			log.Fatal(err)

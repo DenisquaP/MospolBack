@@ -15,6 +15,12 @@ import (
 var AuthorDoesNotExistsError error = errors.New("this author doesn`t exists")
 var ArticleDoesNotExistsError error = errors.New("this article doesn`t exists")
 
+type Article struct {
+	Title   string
+	Content string
+	Author  string
+}
+
 type PostgresDB struct {
 	Config
 	url    string
@@ -110,8 +116,6 @@ func (p PostgresDB) WriteComment(comment entity.CreateCommentRequest) error {
 
 	query := "INSERT INTO comments (comment, commentator, article) VALUES (@comment, @commentator, @article)"
 
-	fmt.Println(query)
-
 	args := pgx.NamedArgs{
 		"article":     comment.Article,
 		"commentator": comment.Commentator,
@@ -123,6 +127,43 @@ func (p PostgresDB) WriteComment(comment entity.CreateCommentRequest) error {
 	}
 
 	return nil
+}
+
+func (p PostgresDB) ReadArticles() (articles []Article, err error) {
+	var art Article
+	query := "SELECT title, content, author FROM articles"
+	rows, err := p.client.Query(p.ctx, query)
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&art.Title, &art.Content, &art.Author)
+		if err != nil {
+			return
+		}
+
+		articles = append(articles, art)
+	}
+
+	return
+}
+
+func (p PostgresDB) ReadArticle(article_id int) (article Article, err error) {
+	query := fmt.Sprintf("SELECT title, content, author FROM articles WHERE article_id = %d", article_id)
+	rows, err := p.client.Query(p.ctx, query)
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&article.Title, &article.Content, &article.Author)
+		if err != nil {
+			return
+		}
+	}
+
+	return
 }
 
 func (p PostgresDB) Close() error {

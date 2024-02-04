@@ -1,6 +1,8 @@
 [GIN-debug] POST   /new_article              --> mospol/internal/services.CreateAtricle (3 handlers)
 [GIN-debug] POST   /new_author               --> mospol/internal/services.CreateAuthor (3 handlers)
 [GIN-debug] POST   /new_comment              --> mospol/internal/services.CreateComment (3 handlers)
+[GIN-debug] GET    /get_articles             --> mospol/internal/services.GetArticles (3 handlers)
+[GIN-debug] GET    /get_article              --> mospol/internal/services.GetArticle (3 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Environment variable PORT is undefined. Using port :8080 by default
