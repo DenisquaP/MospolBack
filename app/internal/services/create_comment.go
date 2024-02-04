@@ -27,4 +27,11 @@ func CreateComment(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t parse body"})
 		return
 	}
+
+	if err := pg.WriteComment(request); err != nil {
+		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t create an entry in db"})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, "ok")
 }

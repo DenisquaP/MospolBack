@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"mospol/internal/entity"
 
@@ -10,6 +11,9 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5"
 )
+
+var AuthorDoesNotExistsError error = errors.New("this author doesn`t exists")
+var ArticleDoesNotExistsError error = errors.New("this article doesn`t exists")
 
 type PostgresDB struct {
 	Config
@@ -39,6 +43,27 @@ func (p *PostgresDB) Connection() error {
 	return nil
 }
 
+func (p PostgresDB) CheckAuthor(author_id int) error {
+	var author int
+	err := p.client.QueryRow(p.ctx, "SELECT author_id FROM authors WHERE author_id=$1", author_id).Scan(&author)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p PostgresDB) CheckArticle(article_id int) error {
+	var article int
+
+	err := p.client.QueryRow(p.ctx, "SELECT article_id FROM articles WHERE article_id=$1", article_id).Scan(&article)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p PostgresDB) WriteAuthor(author entity.CreateAuthorRequest) error {
 	query := "INSERT INTO authors (author_name, is_moderator) VALUES (@name, @moder)"
 
@@ -55,9 +80,11 @@ func (p PostgresDB) WriteAuthor(author entity.CreateAuthorRequest) error {
 }
 
 func (p PostgresDB) WriteAtricle(article entity.CreateAtricleRequest) error {
-	query := "INSERT INTO articles (title, content, author) VALUES (@title, @content, @author)"
+	if err := p.CheckAuthor(article.Author); err != nil {
+		return AuthorDoesNotExistsError
+	}
 
-	fmt.Println(article.Title)
+	query := "INSERT INTO articles (title, content, author) VALUES (@title, @content, @author)"
 
 	args := pgx.NamedArgs{
 		"title":   article.Title,
@@ -73,7 +100,17 @@ func (p PostgresDB) WriteAtricle(article entity.CreateAtricleRequest) error {
 }
 
 func (p PostgresDB) WriteComment(comment entity.CreateCommentRequest) error {
-	query := "INSERT INTO articles (comment, commentator, article) VALUES (@comment, @commentator, @article)"
+	if err := p.CheckAuthor(comment.Commentator); err != nil {
+		return ArticleDoesNotExistsError
+	}
+
+	if err := p.CheckArticle(comment.Article); err != nil {
+		return AuthorDoesNotExistsError
+	}
+
+	query := "INSERT INTO comments (comment, commentator, article) VALUES (@comment, @commentator, @article)"
+
+	fmt.Println(query)
 
 	args := pgx.NamedArgs{
 		"article":     comment.Article,
