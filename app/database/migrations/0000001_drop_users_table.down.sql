@@ -1,1 +1,1 @@
-drop table if Exists articles, authors, comments, schema_migrations 
+drop table if Exists articles, authors, comments, schema_migrations

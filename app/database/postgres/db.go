@@ -129,9 +129,15 @@ func (p PostgresDB) WriteComment(comment entity.CreateCommentRequest) error {
 	return nil
 }
 
-func (p PostgresDB) ReadArticles() (articles []Article, err error) {
+func (p PostgresDB) ReadArticles(page int) (articles []Article, err error) {
 	var art Article
-	query := "SELECT title, content, author FROM articles"
+	offset := page * 7
+	if page == 1 {
+		offset = 0
+	}
+	query := fmt.Sprintf("SELECT header, content, author_name FROM articles JOIN authors on articles.author = authors.author_id LIMIT %d OFFSET %d", 7, offset)
+	fmt.Println(query)
+
 	rows, err := p.client.Query(p.ctx, query)
 	if err != nil {
 		return
@@ -145,6 +151,24 @@ func (p PostgresDB) ReadArticles() (articles []Article, err error) {
 
 		articles = append(articles, art)
 	}
+
+	return
+}
+
+func (p *PostgresDB) LastPage() (lp int, err error) {
+	query := "SELECT COUNT(header) FROM articles"
+
+	err = p.client.QueryRow(p.ctx, query).Scan(&lp)
+	if err != nil {
+		return
+	}
+
+	if lp < 7 {
+		lp = 1
+		return
+	}
+
+	lp = lp / 7
 
 	return
 }

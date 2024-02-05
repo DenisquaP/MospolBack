@@ -23,6 +23,15 @@ type GetAtricleResponse struct {
 	Author  string `json:"author"`
 }
 
+type GetArticlesResponse struct {
+	Articles []GetAtricleResponse `json:"articles"`
+	LastPage int                  `json:"last_page"`
+}
+
 type ErrorResponse struct {
 	Error string `json:"error"`
+}
+
+type OkResponse struct {
+	Message string `json:"message"`
 }
