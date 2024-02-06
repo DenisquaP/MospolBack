@@ -1,20 +1,22 @@
 CREATE TABLE IF NOT EXISTS authors (
     author_id serial primary key,
-    author_name varchar(120),
-    is_moderator boolean
+    email varchar(120) UNIQUE NOT NULL,
+    author_name varchar(120) UNIQUE NOT NULL,
+    password varchar(240) NOT NULL,
+    is_moderator boolean NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS articles (
     article_id serial primary key,
-    header TEXT,
-    content TEXT,
+    header TEXT NOT NULL,
+    content TEXT NOT NULL,
     author INT,
     FOREIGN KEY (author) REFERENCES authors (author_id)
 );
 
 CREATE TABLE IF NOT EXISTS comments (
     comment_id serial PRIMARY KEY,
-    comment TEXT,
+    comment TEXT NOT NULL,
     commentator INT UNIQUE,
     article INT UNIQUE,
     FOREIGN KEY (commentator) REFERENCES authors (author_id),
@@ -22,10 +24,10 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 
 INSERT INTO
-    authors (author_name, is_moderator)
+    authors (email, author_name, password, is_moderator)
 VALUES
-    ('Denis', true),
-    ('Anna', true);
+    ('some_email@mail.ru', 'Denis', 'some_password', true),
+    ('some_email2@mail.ru', 'Anna', 'very_strong_pass' true);
 
 INSERT INTO
     articles (header, content, author)
