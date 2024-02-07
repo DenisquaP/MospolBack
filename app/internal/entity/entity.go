@@ -7,7 +7,9 @@ type CreateAtricleRequest struct {
 }
 
 type CreateAuthorRequest struct {
+	Email       string `json:"email"`
 	Name        string `json:"author_name"`
+	Password    string `json:"password"`
 	IsModerator bool   `json:"is_moderator"`
 }
 
@@ -15,6 +17,11 @@ type CreateCommentRequest struct {
 	Article     int    `json:"article_id"`
 	Commentator int    `json:"commentator_id"`
 	Comment     string `json:"comment"`
+}
+
+type AuthRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type GetAtricleResponse struct {

@@ -9,7 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateAuthor(ctx *gin.Context) {
+// Register godoc
+// @Summary To register an user
+// @Description Creates an entry in db
+// @Param tags body entity.CreateAuthorRequest true "CreateArticle"
+// @Proguce application/json
+// @Success	200
+// @Router /register [post]
+func Register(ctx *gin.Context) {
 	var request entity.CreateAuthorRequest
 
 	pg, err := postgres.NewPostgres()

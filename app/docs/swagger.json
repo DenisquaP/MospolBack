@@ -1,0 +1,192 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "A service to create, read and comment articles",
+        "title": "articles_api",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/auth": {
+            "post": {
+                "description": "Creates an entry in cookie",
+                "summary": "To auth user",
+                "parameters": [
+                    {
+                        "description": "Auth",
+                        "name": "tags",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.AuthRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/get_article": {
+            "get": {
+                "description": "Gets an entry from db by article_id",
+                "summary": "To get 1 article from db",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/get_articles": {
+            "get": {
+                "description": "Gets an entry from db by article_id",
+                "summary": "To get all articles from db",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "description": "Deletes an cookie entry",
+                "summary": "To logout",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/new_article": {
+            "post": {
+                "description": "Creates an entry in db",
+                "summary": "To create an article",
+                "parameters": [
+                    {
+                        "description": "CreateArticle",
+                        "name": "tags",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.CreateAtricleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/new_comment": {
+            "post": {
+                "description": "Creates an entry in db",
+                "summary": "To create a comment to an article",
+                "parameters": [
+                    {
+                        "description": "CreateComment",
+                        "name": "tags",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.CreateCommentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "Creates an entry in db",
+                "summary": "To register an user",
+                "parameters": [
+                    {
+                        "description": "CreateArticle",
+                        "name": "tags",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.CreateAuthorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entity.AuthRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.CreateAtricleRequest": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.CreateAuthorRequest": {
+            "type": "object",
+            "properties": {
+                "author_name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "is_moderator": {
+                    "type": "boolean"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.CreateCommentRequest": {
+            "type": "object",
+            "properties": {
+                "article_id": {
+                    "type": "integer"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "commentator_id": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

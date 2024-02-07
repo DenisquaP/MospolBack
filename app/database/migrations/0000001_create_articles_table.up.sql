@@ -27,7 +27,7 @@ INSERT INTO
     authors (email, author_name, password, is_moderator)
 VALUES
     ('some_email@mail.ru', 'Denis', 'some_password', true),
-    ('some_email2@mail.ru', 'Anna', 'very_strong_pass' true);
+    ('some_email2@mail.ru', 'Anna', 'very_strong_pass', true);
 
 INSERT INTO
     articles (header, content, author)

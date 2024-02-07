@@ -71,11 +71,13 @@ func (p PostgresDB) CheckArticle(article_id int) error {
 }
 
 func (p PostgresDB) WriteAuthor(author entity.CreateAuthorRequest) error {
-	query := "INSERT INTO authors (author_name, is_moderator) VALUES (@name, @moder)"
+	query := "INSERT INTO authors (email, author_name, password, is_moderator) VALUES (@email, @name, @password, @moder)"
 
 	args := pgx.NamedArgs{
-		"name":  author.Name,
-		"moder": author.IsModerator,
+		"email":    author.Email,
+		"name":     author.Name,
+		"password": author.Password,
+		"moder":    author.IsModerator,
 	}
 
 	if _, err := p.client.Exec(p.ctx, query, args); err != nil {

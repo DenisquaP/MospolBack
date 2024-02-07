@@ -9,6 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Create Comment godoc
+// @Summary To create a comment to an article
+// @Description Creates an entry in db
+// @Param tags body entity.CreateCommentRequest true "CreateComment"
+// @Proguce application/json
+// @Success	201
+// @Router /new_comment [post]
 func CreateComment(ctx *gin.Context) {
 	var request entity.CreateCommentRequest
 

@@ -1,0 +1,123 @@
+basePath: /
+definitions:
+  entity.AuthRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  entity.CreateAtricleRequest:
+    properties:
+      author:
+        type: integer
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  entity.CreateAuthorRequest:
+    properties:
+      author_name:
+        type: string
+      email:
+        type: string
+      is_moderator:
+        type: boolean
+      password:
+        type: string
+    type: object
+  entity.CreateCommentRequest:
+    properties:
+      article_id:
+        type: integer
+      comment:
+        type: string
+      commentator_id:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A service to create, read and comment articles
+  title: articles_api
+  version: "1.0"
+paths:
+  /auth:
+    post:
+      description: Creates an entry in cookie
+      parameters:
+      - description: Auth
+        in: body
+        name: tags
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AuthRequest'
+      responses:
+        "201":
+          description: Created
+      summary: To auth user
+  /get_article:
+    get:
+      description: Gets an entry from db by article_id
+      responses:
+        "200":
+          description: OK
+      summary: To get 1 article from db
+  /get_articles:
+    get:
+      description: Gets an entry from db by article_id
+      responses:
+        "200":
+          description: OK
+      summary: To get all articles from db
+  /logout:
+    post:
+      description: Deletes an cookie entry
+      responses:
+        "200":
+          description: OK
+      summary: To logout
+  /new_article:
+    post:
+      description: Creates an entry in db
+      parameters:
+      - description: CreateArticle
+        in: body
+        name: tags
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreateAtricleRequest'
+      responses:
+        "201":
+          description: Created
+      summary: To create an article
+  /new_comment:
+    post:
+      description: Creates an entry in db
+      parameters:
+      - description: CreateComment
+        in: body
+        name: tags
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreateCommentRequest'
+      responses:
+        "201":
+          description: Created
+      summary: To create a comment to an article
+  /register:
+    post:
+      description: Creates an entry in db
+      parameters:
+      - description: CreateArticle
+        in: body
+        name: tags
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreateAuthorRequest'
+      responses:
+        "200":
+          description: OK
+      summary: To register an user
+swagger: "2.0"

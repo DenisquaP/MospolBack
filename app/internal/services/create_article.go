@@ -10,6 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Create Article godoc
+// @Summary To create an article
+// @Description Creates an entry in db
+// @Param tags body entity.CreateAtricleRequest true "CreateArticle"
+// @Proguce application/json
+// @Success	201
+// @Router /new_article [post]
 func CreateAtricle(ctx *gin.Context) {
 	var request entity.CreateAtricleRequest
 

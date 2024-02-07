@@ -10,6 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetArticle godoc
+// @Summary To get 1 article from db
+// @Description Gets an entry from db by article_id
+// @Proguce application/json
+// @Success	200
+// @Router /get_article [get]
 func GetArticle(ctx *gin.Context) {
 	pg, err := postgres.NewPostgres()
 	if err != nil {
