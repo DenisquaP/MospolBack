@@ -1,9 +1,11 @@
 package services
 
 import (
+	"fmt"
 	"log"
 	"mospol/database/postgres"
 	"mospol/internal/entity"
+	emailsender "mospol/internal/functions/email_sender"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,9 +38,15 @@ func CreateComment(ctx *gin.Context) {
 	}
 
 	if err := pg.WriteComment(request); err != nil {
+		fmt.Println(err)
 		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t create an entry in db"})
 		return
 	}
 
+	err = emailsender.Sender("denis.pis@yahoo.com", "new comment")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t send an email"})
+		return
+	}
 	ctx.JSON(http.StatusCreated, "ok")
 }
