@@ -37,16 +37,17 @@ func CreateComment(ctx *gin.Context) {
 		return
 	}
 
+	err = emailsender.Sender("denis.pis@yahoo.com", "new comment")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t send an email"})
+		return
+	}
+
 	if err := pg.WriteComment(request); err != nil {
 		fmt.Println(err)
 		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t create an entry in db"})
 		return
 	}
 
-	err = emailsender.Sender("denis.pis@yahoo.com", "new comment")
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t send an email"})
-		return
-	}
 	ctx.JSON(http.StatusCreated, "ok")
 }

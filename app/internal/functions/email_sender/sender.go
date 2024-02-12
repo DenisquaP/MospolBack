@@ -9,6 +9,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type smtpConfig struct {
+	from     string
+	password string
+	server   string
+	address  string
+}
+
 func Sender(recipient, text string) error {
 	err := godotenv.Load("internal/functions/email_sender/.env")
 	if err != nil {
@@ -40,14 +47,21 @@ func Sender(recipient, text string) error {
 		log.Fatal("Can`t find smtp port in env")
 	}
 
+	config := smtpConfig{
+		from:     from,
+		password: password,
+		server:   smtpHost,
+		address:  smtpHost + ":" + smtpPort,
+	}
+
 	// Message.
 	message := []byte(text)
 
 	// Authentication.
-	auth := smtp.PlainAuth("", from, password, smtpHost)
+	auth := smtp.PlainAuth("", config.from, config.password, config.server)
 
 	// Sending email.
-	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
+	err = smtp.SendMail(config.address, auth, config.from, to, message)
 	if err != nil {
 		fmt.Println(err)
 		return err
