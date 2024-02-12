@@ -37,8 +37,9 @@ func CreateComment(ctx *gin.Context) {
 		return
 	}
 
-	err = emailsender.Sender("denis.pis@yahoo.com", "new comment")
+	err = emailsender.Sender("piskarev.py@yandex.ru", "new comment")
 	if err != nil {
+		fmt.Println(err)
 		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t send an email"})
 		return
 	}

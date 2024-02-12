@@ -1,69 +1,58 @@
 package emailsender
 
 import (
-	"fmt"
-	"log"
+	"crypto/tls"
 	"net/smtp"
-	"os"
-
-	"github.com/joho/godotenv"
 )
 
-type smtpConfig struct {
-	from     string
-	password string
-	server   string
-	address  string
-}
-
 func Sender(recipient, text string) error {
-	err := godotenv.Load("internal/functions/email_sender/.env")
+	config := LoadConfig()
+	message := []byte(
+		"Subject: Новый коментарий\r\n" + // Установка темы письма
+			"\r\n" + // Пустая строка для разделения заголовков и тела письма
+			"Новый коментарий от",
+	)
+
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true,
+		ServerName:         config.Host,
+	}
+
+	conn, err := tls.Dial("tcp", config.Address, tlsConfig)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	from := os.Getenv("EMAIL_FROM")
-	if from == "" {
-		log.Fatal("Can`t find email in env")
-	}
-
-	password := os.Getenv("EMAIL_PASS")
-	if password == "" {
-		log.Fatal("Can`t find password in env")
-	}
-
-	// Receiver email address.
-	to := []string{
-		recipient,
-	}
-
-	// smtp server configuration.
-	smtpHost := os.Getenv("SMTP_HOST")
-	if smtpHost == "" {
-		log.Fatal("Can`t find smtp host in env")
-	}
-	smtpPort := os.Getenv("SMTP_PORT")
-	if smtpPort == "" {
-		log.Fatal("Can`t find smtp port in env")
-	}
-
-	config := smtpConfig{
-		from:     from,
-		password: password,
-		server:   smtpHost,
-		address:  smtpHost + ":" + smtpPort,
-	}
-
-	// Message.
-	message := []byte(text)
-
-	// Authentication.
-	auth := smtp.PlainAuth("", config.from, config.password, config.server)
-
-	// Sending email.
-	err = smtp.SendMail(config.address, auth, config.from, to, message)
+	client, err := smtp.NewClient(conn, config.Host)
 	if err != nil {
-		fmt.Println(err)
+		return err
+	}
+
+	auth := smtp.PlainAuth("tcp", config.From, config.Password, config.Host)
+	if err := client.Auth(auth); err != nil {
+		return err
+	}
+
+	if err := client.Mail(config.From); err != nil {
+		return err
+	}
+
+	if err := client.Rcpt(recipient); err != nil {
+		return err
+	}
+
+	wc, err := client.Data()
+	if err != nil {
+		return err
+	}
+
+	_, err = wc.Write(message)
+	if err != nil {
+		return err
+	}
+
+	err = wc.Close()
+	if err != nil {
 		return err
 	}
 
