@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"log"
 	"mospol/database/postgres"
 	"mospol/internal/entity"
@@ -40,5 +41,5 @@ func Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, "ok")
+	ctx.JSON(http.StatusCreated, entity.OkResponse{Message: fmt.Sprintf("Author %s has been created", request.Name)})
 }

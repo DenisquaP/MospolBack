@@ -52,6 +52,9 @@ func Auth(ctx *gin.Context) {
 	}
 
 	cookie, err := generator.JwtGenerator(request.Email, request.Password, secretKey)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	ctx.SetCookie("articles_service", cookie, 3600, "/", "localhost", false, true)
 

@@ -12,13 +12,23 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-var AuthorDoesNotExistsError error = errors.New("this author doesn`t exists")
-var ArticleDoesNotExistsError error = errors.New("this article doesn`t exists")
+var ErrAuthorDoesNotExists error = errors.New("this author doesn`t exists")
+var ErrArticleDoesNotExists error = errors.New("this article doesn`t exists")
 
 type Article struct {
-	Title   string
-	Content string
-	Author  string
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Author  string `json:"author"`
+}
+
+type Comment struct {
+	Commentator string `json:"commentator"`
+	Comment     string `json:"comment"`
+}
+
+type ArticleStr struct {
+	Article  Article   `json:"article"`
+	Comments []Comment `json:"comments"`
 }
 
 type PostgresDB struct {
@@ -89,7 +99,7 @@ func (p PostgresDB) WriteAuthor(author entity.CreateAuthorRequest) error {
 
 func (p PostgresDB) WriteAtricle(article entity.CreateAtricleRequest) error {
 	if err := p.CheckAuthor(article.Author); err != nil {
-		return AuthorDoesNotExistsError
+		return ErrAuthorDoesNotExists
 	}
 
 	query := "INSERT INTO articles (title, content, author) VALUES (@title, @content, @author)"
@@ -109,11 +119,11 @@ func (p PostgresDB) WriteAtricle(article entity.CreateAtricleRequest) error {
 
 func (p PostgresDB) WriteComment(comment entity.CreateCommentRequest) error {
 	if err := p.CheckAuthor(comment.Commentator); err != nil {
-		return ArticleDoesNotExistsError
+		return ErrArticleDoesNotExists
 	}
 
 	if err := p.CheckArticle(comment.Article); err != nil {
-		return AuthorDoesNotExistsError
+		return ErrAuthorDoesNotExists
 	}
 
 	query := "INSERT INTO comments (comment, commentator, article) VALUES (@comment, @commentator, @article)"
@@ -138,7 +148,6 @@ func (p PostgresDB) ReadArticles(page int) (articles []Article, err error) {
 		offset = 0
 	}
 	query := fmt.Sprintf("SELECT header, content, author_name FROM articles JOIN authors on articles.author = authors.author_id LIMIT %d OFFSET %d", 7, offset)
-	fmt.Println(query)
 
 	rows, err := p.client.Query(p.ctx, query)
 	if err != nil {
@@ -175,18 +184,45 @@ func (p *PostgresDB) LastPage() (lp int, err error) {
 	return
 }
 
-func (p PostgresDB) ReadArticle(article_id int) (article Article, err error) {
-	query := fmt.Sprintf("SELECT title, content, author FROM articles WHERE article_id = %d", article_id)
+func (p PostgresDB) ReadArticle(article_id int) (article ArticleStr, err error) {
+	query := fmt.Sprintf("SELECT header, content, author_name FROM articles JOIN authors ON articles.author = authors.author_id  WHERE article_id = %d", article_id)
 	rows, err := p.client.Query(p.ctx, query)
 	if err != nil {
 		return
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&article.Title, &article.Content, &article.Author)
+		err = rows.Scan(&article.Article.Title, &article.Article.Content, &article.Article.Author)
 		if err != nil {
 			return
 		}
+	}
+
+	comments, err := p.ReadComments(article_id)
+	if err != nil {
+		return
+	}
+
+	article.Comments = comments
+
+	return
+}
+
+func (p PostgresDB) ReadComments(article int) (comments []Comment, err error) {
+	var comment Comment
+	query := fmt.Sprintf("SELECT comment, author_name FROM comments JOIN authors on comments.commentator = authors.author_id WHERE article = %d", article)
+	rows, err := p.client.Query(p.ctx, query)
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&comment.Comment, &comment.Commentator)
+		if err != nil {
+			return
+		}
+
+		comments = append(comments, comment)
 	}
 
 	return

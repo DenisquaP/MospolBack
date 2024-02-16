@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"log"
 	"mospol/database/postgres"
 	"mospol/internal/entity"
@@ -36,15 +37,10 @@ func GetArticle(ctx *gin.Context) {
 
 	article, err := pg.ReadArticle(article_id)
 	if err != nil {
+		fmt.Println(err, article)
 		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t find in db"})
 		return
 	}
 
-	response := entity.GetAtricleResponse{
-		Title:   article.Title,
-		Content: article.Content,
-		Author:  article.Author,
-	}
-
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, article)
 }
