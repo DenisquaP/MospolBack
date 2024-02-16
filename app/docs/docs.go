@@ -40,10 +40,22 @@ const docTemplate = `{
         "/get_article": {
             "get": {
                 "description": "Gets an entry from db by article_id",
-                "summary": "To get 1 article from db",
+                "summary": "To get all articles from db",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/postgres.ArticleStr"
+                        }
                     }
                 }
             }
@@ -52,9 +64,21 @@ const docTemplate = `{
             "get": {
                 "description": "Gets an entry from db by article_id",
                 "summary": "To get all articles from db",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.GetArticlesResponse"
+                        }
                     }
                 }
             }
@@ -191,6 +215,73 @@ const docTemplate = `{
                 },
                 "commentator_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "entity.GetArticlesResponse": {
+            "type": "object",
+            "properties": {
+                "articles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.GetAtricleResponse"
+                    }
+                },
+                "last_page": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.GetAtricleResponse": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "postgres.Article": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "postgres.ArticleStr": {
+            "type": "object",
+            "properties": {
+                "article": {
+                    "$ref": "#/definitions/postgres.Article"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/postgres.Comment"
+                    }
+                }
+            }
+        },
+        "postgres.Comment": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "commentator": {
+                    "type": "string"
                 }
             }
         }

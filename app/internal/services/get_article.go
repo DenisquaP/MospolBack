@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"log"
 	"mospol/database/postgres"
 	"mospol/internal/entity"
@@ -12,11 +11,12 @@ import (
 )
 
 // GetArticle godoc
-// @Summary To get 1 article from db
-// @Description Gets an entry from db by article_id
-// @Proguce application/json
-// @Success	200
-// @Router /get_article [get]
+// @Summary		To get all articles from db
+// @Description	Gets an entry from db by article_id
+// @Proguce		application/json
+// @Param		page query int true "Page number"
+// @Success		200 {object} postgres.ArticleStr
+// @Router		/get_article [get]
 func GetArticle(ctx *gin.Context) {
 	pg, err := postgres.NewPostgres()
 	if err != nil {
@@ -37,7 +37,6 @@ func GetArticle(ctx *gin.Context) {
 
 	article, err := pg.ReadArticle(article_id)
 	if err != nil {
-		fmt.Println(err, article)
 		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t find in db"})
 		return
 	}

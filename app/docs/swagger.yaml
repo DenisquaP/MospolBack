@@ -36,6 +36,49 @@ definitions:
       commentator_id:
         type: integer
     type: object
+  entity.GetArticlesResponse:
+    properties:
+      articles:
+        items:
+          $ref: '#/definitions/entity.GetAtricleResponse'
+        type: array
+      last_page:
+        type: integer
+    type: object
+  entity.GetAtricleResponse:
+    properties:
+      author:
+        type: string
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  postgres.Article:
+    properties:
+      author:
+        type: string
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  postgres.ArticleStr:
+    properties:
+      article:
+        $ref: '#/definitions/postgres.Article'
+      comments:
+        items:
+          $ref: '#/definitions/postgres.Comment'
+        type: array
+    type: object
+  postgres.Comment:
+    properties:
+      comment:
+        type: string
+      commentator:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -60,16 +103,32 @@ paths:
   /get_article:
     get:
       description: Gets an entry from db by article_id
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
-      summary: To get 1 article from db
+          schema:
+            $ref: '#/definitions/postgres.ArticleStr'
+      summary: To get all articles from db
   /get_articles:
     get:
       description: Gets an entry from db by article_id
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/entity.GetArticlesResponse'
       summary: To get all articles from db
   /logout:
     post:
