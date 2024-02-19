@@ -17,7 +17,7 @@ import (
 // @Description Creates an entry in cookie
 // @Param tags body entity.AuthRequest true "Auth"
 // @Proguce application/json
-// @Success	201
+// @Success	200 {object} entity.AuthResponse
 // @Router /auth [post]
 func Auth(ctx *gin.Context) {
 	var request entity.AuthRequest
@@ -56,7 +56,12 @@ func Auth(ctx *gin.Context) {
 		log.Fatal(err)
 	}
 
+	author, err := pg.GetAuthor(request.Email)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	ctx.SetCookie("articles_service", cookie, 3600, "/", "localhost", false, true)
 
-	ctx.JSON(http.StatusCreated, entity.OkResponse{Message: "authentificated"})
+	ctx.JSON(http.StatusCreated, entity.AuthResponse{User: author.User, IsModerator: author.IsModerator})
 }

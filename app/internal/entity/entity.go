@@ -24,6 +24,11 @@ type AuthRequest struct {
 	Password string `json:"password"`
 }
 
+type AuthResponse struct {
+	User        string `json:"user" db:"author_name"`
+	IsModerator bool   `json:"is_moderator" db:"is_moderator"`
+}
+
 type GetAtricleResponse struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`

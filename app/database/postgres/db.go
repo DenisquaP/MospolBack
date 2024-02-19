@@ -80,6 +80,16 @@ func (p PostgresDB) CheckArticle(article_id int) error {
 	return nil
 }
 
+func (p PostgresDB) GetAuthor(email string) (author entity.AuthResponse, err error) {
+	err = p.client.QueryRow(p.ctx, "SELECT author_name, is_moderator FROM authors WHERE email=$1", email).Scan(&author.User, &author.IsModerator)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	return
+}
+
 func (p PostgresDB) WriteAuthor(author entity.CreateAuthorRequest) error {
 	query := "INSERT INTO authors (email, author_name, password, is_moderator) VALUES (@email, @name, @password, @moder)"
 

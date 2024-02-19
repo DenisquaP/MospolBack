@@ -7,6 +7,13 @@ definitions:
       password:
         type: string
     type: object
+  entity.AuthResponse:
+    properties:
+      is_moderator:
+        type: boolean
+      user:
+        type: string
+    type: object
   entity.CreateAtricleRequest:
     properties:
       author:
@@ -97,8 +104,10 @@ paths:
         schema:
           $ref: '#/definitions/entity.AuthRequest'
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.AuthResponse'
       summary: To auth user
   /get_article:
     get:
