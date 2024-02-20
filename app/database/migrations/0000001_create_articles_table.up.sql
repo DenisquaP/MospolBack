@@ -10,15 +10,16 @@ CREATE TABLE IF NOT EXISTS articles (
     article_id serial primary key,
     header TEXT NOT NULL,
     content TEXT NOT NULL,
-    author INT,
+    author INT NOT NULL,
     FOREIGN KEY (author) REFERENCES authors (author_id)
 );
 
 CREATE TABLE IF NOT EXISTS comments (
     comment_id serial PRIMARY KEY,
     comment TEXT NOT NULL,
-    commentator INT,
-    article INT,
+    commentator INT NOT NULL,
+    article INT NOT NULL,
+    approved boolean default false NOT NULL,
     FOREIGN KEY (commentator) REFERENCES authors (author_id),
     FOREIGN KEY (article) REFERENCES articles (article_id)
 );

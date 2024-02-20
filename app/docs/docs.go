@@ -15,6 +15,48 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/all_comments": {
+            "get": {
+                "description": "Gets all comments",
+                "summary": "Returns all unapproved comments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/postgres.UnapprovedComment"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/approve_comment": {
+            "patch": {
+                "description": "Updates an entry in db",
+                "summary": "To accept or delete comment",
+                "parameters": [
+                    {
+                        "description": "Approve",
+                        "name": "tags",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.ApproveRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.OkResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth": {
             "post": {
                 "description": "Creates an entry in cookie",
@@ -165,6 +207,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entity.ApproveRequest": {
+            "type": "object",
+            "properties": {
+                "approve": {
+                    "type": "boolean"
+                },
+                "article_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "entity.AuthRequest": {
             "type": "object",
             "properties": {
@@ -260,6 +313,14 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.OkResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "postgres.Article": {
             "type": "object",
             "properties": {
@@ -292,6 +353,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "comment": {
+                    "type": "string"
+                },
+                "commentator": {
+                    "type": "string"
+                }
+            }
+        },
+        "postgres.UnapprovedComment": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "comment_id": {
                     "type": "string"
                 },
                 "commentator": {

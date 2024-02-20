@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  entity.ApproveRequest:
+    properties:
+      approve:
+        type: boolean
+      article_id:
+        type: integer
+    type: object
   entity.AuthRequest:
     properties:
       email:
@@ -61,6 +68,11 @@ definitions:
       title:
         type: string
     type: object
+  entity.OkResponse:
+    properties:
+      message:
+        type: string
+    type: object
   postgres.Article:
     properties:
       author:
@@ -86,6 +98,15 @@ definitions:
       commentator:
         type: string
     type: object
+  postgres.UnapprovedComment:
+    properties:
+      comment:
+        type: string
+      comment_id:
+        type: string
+      commentator:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -93,6 +114,33 @@ info:
   title: articles_api
   version: "1.0"
 paths:
+  /all_comments:
+    get:
+      description: Gets all comments
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/postgres.UnapprovedComment'
+            type: array
+      summary: Returns all unapproved comments
+  /approve_comment:
+    patch:
+      description: Updates an entry in db
+      parameters:
+      - description: Approve
+        in: body
+        name: tags
+        required: true
+        schema:
+          $ref: '#/definitions/entity.ApproveRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.OkResponse'
+      summary: To accept or delete comment
   /auth:
     post:
       description: Creates an entry in cookie

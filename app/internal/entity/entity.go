@@ -24,6 +24,11 @@ type AuthRequest struct {
 	Password string `json:"password"`
 }
 
+type ApproveRequest struct {
+	ArticleId int  `json:"article_id"`
+	Approve   bool `json:"approve"`
+}
+
 type AuthResponse struct {
 	User        string `json:"user" db:"author_name"`
 	IsModerator bool   `json:"is_moderator" db:"is_moderator"`

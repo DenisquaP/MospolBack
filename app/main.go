@@ -50,6 +50,8 @@ func main() {
 
 	router.POST("/new_article", services.CreateAtricle)
 	router.POST("/new_comment", services.CreateComment)
+	router.PATCH("/approve_comment", services.ApproveComment)
+	router.GET("/all_comments", services.ToApprove)
 
 	router.GET("/get_articles", services.GetArticles)
 	router.GET("/get_article", services.GetArticle)

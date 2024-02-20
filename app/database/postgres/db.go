@@ -26,6 +26,11 @@ type Comment struct {
 	Comment     string `json:"comment"`
 }
 
+type UnapprovedComment struct {
+	CommentId string `json:"comment_id"`
+	Comment
+}
+
 type ArticleStr struct {
 	Article  Article   `json:"article"`
 	Comments []Comment `json:"comments"`
@@ -220,7 +225,7 @@ func (p PostgresDB) ReadArticle(article_id int) (article ArticleStr, err error) 
 
 func (p PostgresDB) ReadComments(article int) (comments []Comment, err error) {
 	var comment Comment
-	query := fmt.Sprintf("SELECT comment, author_name FROM comments JOIN authors on comments.commentator = authors.author_id WHERE article = %d", article)
+	query := fmt.Sprintf("SELECT comment, author_name FROM comments JOIN authors on comments.commentator = authors.author_id WHERE article = %d and approved = true", article)
 	rows, err := p.client.Query(p.ctx, query)
 	if err != nil {
 		return
@@ -229,6 +234,49 @@ func (p PostgresDB) ReadComments(article int) (comments []Comment, err error) {
 	for rows.Next() {
 		err = rows.Scan(&comment.Comment, &comment.Commentator)
 		if err != nil {
+			return
+		}
+
+		comments = append(comments, comment)
+	}
+
+	return
+}
+
+func (p PostgresDB) ApproveComment(comment entity.ApproveRequest) (err error) {
+	if !comment.Approve {
+		query := fmt.Sprintf("DELETE FROM comments WHERE comment_id = %d", comment.ArticleId)
+
+		_, err = p.client.Exec(p.ctx, query)
+		if err != nil {
+			return
+		}
+	} else {
+		query := fmt.Sprintf("UPDATE comments SET approved = true WHERE comment_id = %d", comment.ArticleId)
+
+		_, err = p.client.Exec(p.ctx, query)
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+// to get all unapproved comments
+func (p PostgresDB) GetComments() (comments []UnapprovedComment, err error) {
+	var comment UnapprovedComment
+	query := "SELECT comment_id, comment, author_name FROM comments JOIN authors on comments.commentator = authors.author_id WHERE approved = false"
+	rows, err := p.client.Query(p.ctx, query)
+	if err != nil {
+		fmt.Println("s", err)
+		return
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&comment.CommentId, &comment.Comment.Comment, &comment.Commentator)
+		if err != nil {
+			fmt.Println("ss", err)
 			return
 		}
 
