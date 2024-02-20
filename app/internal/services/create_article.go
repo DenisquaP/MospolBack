@@ -1,10 +1,10 @@
 package services
 
 import (
-	"fmt"
 	"log"
 	"mospol/database/postgres"
 	"mospol/internal/entity"
+	"mospol/internal/functions/verification"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,12 +37,13 @@ func CreateAtricle(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println(request)
+	// check jwt in cookie
+	verification.Verify(ctx, pg)
 
 	if err := pg.WriteAtricle(request); err != nil {
 		ctx.JSON(http.StatusInternalServerError, entity.ErrorResponse{Error: "can`t create an entry in db"})
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, "ok")
+	ctx.JSON(http.StatusCreated, entity.OkResponse{Message: "Created"})
 }

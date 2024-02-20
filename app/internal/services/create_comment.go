@@ -6,6 +6,7 @@ import (
 	"mospol/database/postgres"
 	"mospol/internal/entity"
 	emailsender "mospol/internal/functions/email_sender"
+	"mospol/internal/functions/verification"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,8 @@ func CreateComment(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t parse body"})
 		return
 	}
+
+	verification.Verify(ctx, pg)
 
 	err = emailsender.Sender("piskarev.py@yandex.ru", "new comment")
 	if err != nil {

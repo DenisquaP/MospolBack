@@ -1,16 +1,31 @@
 package generator
 
 import (
-	"github.com/dgrijalva/jwt-go"
+	"log"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
-func JwtGenerator(login, password, secretKey string) (string, error) {
-	bSecretKey := []byte(secretKey)
-	payload := jwt.MapClaims{
-		"login":    login,
-		"password": password,
+type UserClaim struct {
+	jwt.RegisteredClaims
+	Login    string
+	Password string
+}
+
+func JwtGenerator(login, password string) (string, error) {
+	secretKey, err := LoadKey()
+	if err != nil {
+		log.Fatal(err)
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
+
+	bSecretKey := []byte(secretKey)
+	claims := UserClaim{
+		RegisteredClaims: jwt.RegisteredClaims{},
+		Login:            login,
+		Password:         password,
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
 	t, err := token.SignedString(bSecretKey)
 	if err != nil {
 		return "", err

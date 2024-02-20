@@ -6,10 +6,8 @@ import (
 	"mospol/internal/entity"
 	generator "mospol/internal/functions/jwt_generator"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 // Auth godoc
@@ -39,19 +37,7 @@ func Auth(ctx *gin.Context) {
 		return
 	}
 
-	err = godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	secretKey := os.Getenv("SECRET_KEY")
-
-	if secretKey == "" {
-		log.Fatal("can`t load secret key")
-	}
-
-	cookie, err := generator.JwtGenerator(request.Email, request.Password, secretKey)
+	cookie, err := generator.JwtGenerator(request.Email, request.Password)
 	if err != nil {
 		log.Fatal(err)
 	}

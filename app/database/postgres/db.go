@@ -74,6 +74,17 @@ func (p PostgresDB) CheckAuthor(author_id int) error {
 	return nil
 }
 
+func (p PostgresDB) CheckAuthroEmail(email, password string) (res bool, err error) {
+	var author int
+	err = p.client.QueryRow(p.ctx, "SELECT author_id FROM authors WHERE email = $1 AND password = $2", email, password).Scan(&author)
+	if err != nil {
+		return
+	}
+
+	res = true
+	return
+}
+
 func (p PostgresDB) CheckArticle(article_id int) error {
 	var article int
 
@@ -117,7 +128,7 @@ func (p PostgresDB) WriteAtricle(article entity.CreateAtricleRequest) error {
 		return ErrAuthorDoesNotExists
 	}
 
-	query := "INSERT INTO articles (title, content, author) VALUES (@title, @content, @author)"
+	query := "INSERT INTO articles (header, content, author) VALUES (@title, @content, @author)"
 
 	args := pgx.NamedArgs{
 		"title":   article.Title,
