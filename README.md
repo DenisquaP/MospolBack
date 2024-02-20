@@ -1,2 +1,2 @@
 # MospolBack
-Backend for project
+Backend for a project
