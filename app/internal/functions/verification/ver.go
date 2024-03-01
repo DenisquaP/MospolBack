@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Verify(ctx *gin.Context, pg postgres.PostgresDB) {
+func Verify(ctx *gin.Context, pg postgres.PostgresDB) (b bool) {
 	cookie, err := ctx.Cookie("articles_service")
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, entity.ErrorResponse{Error: "unauthorized"})
@@ -28,4 +28,7 @@ func Verify(ctx *gin.Context, pg postgres.PostgresDB) {
 		ctx.JSON(http.StatusNotFound, entity.ErrorResponse{Error: "User not found"})
 		return
 	}
+
+	b = true
+	return
 }

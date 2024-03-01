@@ -10,7 +10,7 @@ func Sender(recipient, text string) error {
 	message := []byte(
 		"Subject: Новый коментарий\r\n" + // Установка темы письма
 			"\r\n" + // Пустая строка для разделения заголовков и тела письма
-			"Новый коментарий от",
+			"Новый комментарий",
 	)
 
 	tlsConfig := &tls.Config{

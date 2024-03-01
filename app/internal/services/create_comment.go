@@ -1,11 +1,10 @@
 package services
 
 import (
-	"fmt"
 	"log"
 	"mospol/database/postgres"
+	rabbit "mospol/database/rabbit_code"
 	"mospol/internal/entity"
-	emailsender "mospol/internal/functions/email_sender"
 	"mospol/internal/functions/verification"
 	"net/http"
 
@@ -38,20 +37,22 @@ func CreateComment(ctx *gin.Context) {
 		return
 	}
 
-	verification.Verify(ctx, pg)
+	if r := verification.Verify(ctx, pg); !r {
+		return
+	}
 
-	err = emailsender.Sender("piskarev.py@yandex.ru", "new comment")
+	err = rabbit.Send()
 	if err != nil {
-		fmt.Println(err)
 		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t send an email"})
 		return
 	}
 
 	if err := pg.WriteComment(request); err != nil {
-		fmt.Println(err)
 		ctx.JSON(http.StatusBadRequest, entity.ErrorResponse{Error: "can`t create an entry in db"})
 		return
 	}
 
 	ctx.JSON(http.StatusCreated, "ok")
+
+	go rabbit.Recieve()
 }
