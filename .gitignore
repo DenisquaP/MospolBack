@@ -9,6 +9,7 @@
 *.dylib
 *gin.log
 **.env
+**rabbitmq
 
 # Test binary, built with `go test -c`
 *.test
